@@ -1,0 +1,46 @@
+package com.sistemaClinica.usuario.model;
+
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "USUARIOS")
+public class Usuario {
+
+    @Id
+    @Column(name = "id_usuario")
+    private String idUsuario;
+
+    @Column(name = "nm_email", unique = true, nullable = false)
+    @Email(message = "Email invalido")
+    @NotBlank(message = "Email e obrigatorio")
+    private String nmEmail;
+
+    @Column(name = "nm_usuario")
+    private String nmUsuario;
+
+    @Column(name = "nm_senha", nullable = false)
+    @NotBlank(message = "Senha e obrigatoria")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String nmSenha;
+
+    @Column(name = "ds_role", nullable = false)
+    private String dsRole;
+
+    public Usuario() {}
+
+    public Usuario(String nmEmail, String nmUsuario, String nmSenha, String dsRole) {
+        this.nmEmail = nmEmail;
+        this.nmUsuario = nmUsuario;
+        this.nmSenha = nmSenha;
+        this.dsRole = dsRole;
+    }
+}

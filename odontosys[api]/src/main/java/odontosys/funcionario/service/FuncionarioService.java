@@ -1,0 +1,111 @@
+package com.sistemaClinica.funcionario.service;
+
+import com.sistemaClinica.dentista.model.Dentista;
+import com.sistemaClinica.dentista.repository.DentistaRepository;
+import com.sistemaClinica.funcionario.dto.FuncionarioCadastroDTO;
+import com.sistemaClinica.funcionario.dto.FuncionarioDTO;
+import com.sistemaClinica.funcionario.mapper.FuncionarioMapper;
+import com.sistemaClinica.funcionario.model.Funcionario;
+import com.sistemaClinica.funcionario.model.TipoFuncionario;
+import com.sistemaClinica.funcionario.repository.FuncionarioRepository;
+import com.sistemaClinica.shared.ResourceNotFoundException;
+import com.sistemaClinica.usuario.model.Usuario;
+import com.sistemaClinica.usuario.service.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class FuncionarioService {
+
+    @Autowired
+    private FuncionarioRepository funcionarioRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private FuncionarioMapper funcionarioMapper;
+
+    @Autowired
+    private DentistaRepository dentistaRepository;
+
+    public List<FuncionarioDTO> listarTodos() {
+        return funcionarioRepository.findAll().stream()
+                .map(funcionarioMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasAnyRole('GERENTE', 'ADMINISTRATIVO') or authentication.name == @funcionarioRepository.findById(#id).orElse(null)?.email")
+    public FuncionarioDTO buscarPorId(Integer id) {
+        return funcionarioRepository.findById(id)
+                .map(funcionarioMapper::toDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionario nao encontrado"));
+    }
+
+    @Transactional
+    public FuncionarioDTO cadastrarFuncionarioEUsuario(FuncionarioCadastroDTO dto) {
+        Usuario novoUsuario = new Usuario();
+        novoUsuario.setNmEmail(dto.getEmail());
+        novoUsuario.setNmSenha(dto.getSenha());
+        novoUsuario.setNmUsuario(dto.getNmFuncionario());
+        
+        // Mapeamento de Cargo para Papel (Role)
+        String role = switch (dto.getCargo()) {
+            case ADMINISTRATIVO -> "ROLE_ADMINISTRATIVO";
+            case DENTISTA -> "ROLE_DENTISTA";
+            case GERENTE -> "ROLE_GERENTE";
+            default -> "ROLE_USER";
+        };
+        novoUsuario.setDsRole(role);
+
+        usuarioService.registrar(novoUsuario);
+
+        Funcionario funcionario = new Funcionario();
+        funcionario.setNmFuncionario(dto.getNmFuncionario());
+        funcionario.setNuMatricula(dto.getNuMatricula());
+        funcionario.setCargo(dto.getCargo());
+        funcionario.setDataAdmissao(dto.getDataAdmissao());
+        funcionario.setEmail(dto.getEmail());
+        funcionario.setTelefone(dto.getTelefone());
+
+        Funcionario funcionarioSalvo = funcionarioRepository.save(funcionario);
+        FuncionarioDTO funcionarioDTO = funcionarioMapper.toDto(funcionarioSalvo);
+
+        if (dto.getCargo() == TipoFuncionario.DENTISTA) {
+            if (dto.getCro() == null || dto.getCro().isBlank()) {
+                throw new IllegalArgumentException("CRO e obrigatorio para dentistas");
+            }
+            if (dto.getEspecializacao() == null || dto.getEspecializacao().isBlank()) {
+                throw new IllegalArgumentException("Especializacao e obrigatoria para dentistas");
+            }
+            Dentista dentista = new Dentista();
+            dentista.setNome(dto.getNmFuncionario());
+            dentista.setEspecializacao(dto.getEspecializacao());
+            dentista.setCro(dto.getCro());
+            dentista.setEmail(dto.getEmail());
+            dentista.setTelefone(dto.getTelefone());
+            dentista.setFuncionario(funcionarioSalvo);
+            Dentista dentistaSalvo = dentistaRepository.save(dentista);
+            funcionarioDTO.setIdDentista(String.valueOf(dentistaSalvo.getIdDentista()));
+        }
+
+        return funcionarioDTO;
+    }
+
+    public FuncionarioDTO salvar(FuncionarioDTO funcionarioDTO) {
+        Funcionario funcionario = funcionarioMapper.toEntity(funcionarioDTO);
+        return funcionarioMapper.toDto(funcionarioRepository.save(funcionario));
+    }
+
+    public void deletar(Integer id) {
+        if (!funcionarioRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Funcionario nao encontrado");
+        }
+        funcionarioRepository.deleteById(id);
+    }
+}
