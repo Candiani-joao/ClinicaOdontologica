@@ -1,0 +1,252 @@
+.navbar-custom {
+    /*background: linear-gradient(135deg, rgba(12, 74, 110, 0.96), rgba(15, 118, 110, 0.92));*/
+    background: #9237ff;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 32px rgba(12, 37, 63, 0.15);
+    padding: 0.6rem 0;
+    transition: box-shadow 0.3s ease;
+    /* backdrop-filter cria um contexto de empilhamento: sem position/z-index
+       os dropdowns ficavam presos nele e eram cobertos pelos cards da página
+       (que também criam contextos via transform/animation). */
+    position: relative;
+    z-index: 1030;
+}
+
+.navbar-custom .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: white;
+    font-weight: 800;
+    font-size: 1.35rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s ease;
+}
+
+.navbar-custom .navbar-brand__icon svg {
+    transition: transform 0.3s ease;
+}
+
+.navbar-custom .navbar-brand:hover {
+    opacity: 0.85;
+}
+
+.navbar-custom .navbar-brand:hover .navbar-brand__icon svg {
+    transform: scale(1.05);
+}
+
+.navbar-skeleton-text {
+    width: 200px;
+    height: 18px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 9px;
+    animation: navbarPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes navbarPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.nav-link-with-icon {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.45rem;
+    color: white !important;
+    padding: 8px 16px !important;
+    border-radius: 999px !important;
+    font-weight: 500;
+    font-size: 0.88rem;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.nav-link-with-icon:hover {
+    background-color: rgba(255,255,255,0.12) !important;
+    transform: translateY(-1px);
+}
+
+.nav-link-with-icon svg,
+.nav-dropdown-title svg {
+    flex-shrink: 0;
+}
+
+/* Conteúdo do título dos dropdowns: só alinha ícone + texto.
+   O padding/pill fica no próprio .dropdown-toggle (antes era duplicado). */
+.nav-dropdown-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+/* Item ativo: destaque sem alterar dimensões nem posição */
+.navbar-custom .nav-link-with-icon.active,
+.navbar-custom .erp-module-dropdown > .dropdown-toggle.active {
+    background-color: rgba(255,255,255,0.2) !important;
+    font-weight: 600;
+    transform: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-custom .navbar-toggler {
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: background-color 0.2s ease;
+}
+
+.navbar-custom .navbar-toggler:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.navbar-custom .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2) !important;
+}
+
+.user-dropdown-wrapper > .dropdown-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.4rem;
+    color: white !important;
+    padding: 4px 12px 4px 4px !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,0.1) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    font-weight: 500 !important;
+    font-size: 0.88rem !important;
+    transition: background-color 0.2s ease;
+}
+
+.user-dropdown-wrapper > .dropdown-toggle:hover {
+    background: rgba(255,255,255,0.18) !important;
+}
+
+.user-dropdown-wrapper > .dropdown-toggle::after {
+    border-top-color: rgba(255,255,255,0.7);
+}
+
+.user-dropdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: rgba(255,255,255,0.8);
+    color: #0c4a6e;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.user-name {
+    display: block;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.82rem;
+}
+
+@media (min-width: 992px) {
+    .user-dropdown-wrapper {
+        margin-left: 0.5rem;
+    }
+}
+
+/* ERP Module Dropdowns */
+.erp-module-dropdown > .dropdown-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.45rem;
+    color: white !important;
+    padding: 8px 16px !important;
+    border-radius: 999px !important;
+    font-weight: 500;
+    font-size: 0.88rem;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.erp-module-dropdown > .dropdown-toggle:hover {
+    background-color: rgba(255,255,255,0.12) !important;
+    transform: translateY(-1px);
+}
+
+.erp-module-dropdown > .dropdown-toggle::after {
+    border-top-color: rgba(255,255,255,0.7);
+    margin-left: 0.25rem;
+}
+
+.erp-module-dropdown .dropdown-menu,
+.user-dropdown-wrapper .dropdown-menu {
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(12, 37, 63, 0.18);
+    padding: 0.4rem 0;
+    min-width: 180px;
+}
+
+.erp-module-dropdown .dropdown-item,
+.user-dropdown-wrapper .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #374151;
+    padding: 0.55rem 1.1rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.erp-module-dropdown .dropdown-item:hover,
+.user-dropdown-wrapper .dropdown-item:hover {
+    background-color: #f3f0ff;
+    color: #7c3aed;
+}
+
+.erp-module-dropdown .dropdown-divider {
+    margin: 0.3rem 0;
+    border-color: #f0f0f0;
+}
+
+.navbar-custom .dropdown-menu[data-bs-popper] {
+    margin-top: 0.4rem;
+}
+
+/* Menu recolhido (abaixo do breakpoint lg do Navbar expand="lg") */
+@media (max-width: 991.98px) {
+    .navbar-custom .navbar-collapse {
+        padding: 0.5rem 0 0.25rem;
+    }
+
+    .navbar-custom .navbar-nav {
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .navbar-custom .navbar-nav .dropdown-menu {
+        margin: 0.25rem 0 0.5rem;
+    }
+
+    .user-dropdown-wrapper {
+        margin-top: 0.5rem;
+    }
+}
